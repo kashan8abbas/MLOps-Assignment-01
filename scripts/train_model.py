@@ -45,7 +45,8 @@ def main() -> None:
         X, y, test_size=0.2, random_state=42
     )
 
-    pipeline = Pipeline([("scaler", StandardScaler()), ("reg", LinearRegression())])
+    pipeline = Pipeline([("scaler", StandardScaler()),
+                        ("reg", LinearRegression())])
 
     pipeline.fit(X_train, y_train)
 

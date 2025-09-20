@@ -3,8 +3,6 @@ from __future__ import annotations
 import argparse
 import hashlib
 from pathlib import Path
-
-import numpy as np
 import pandas as pd
 from sklearn.datasets import make_classification
 

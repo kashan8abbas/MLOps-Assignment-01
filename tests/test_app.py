@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 
 import pytest
 from flask import Flask
@@ -53,7 +52,8 @@ def test_predict_list_of_numbers(app_with_model: Flask):
 
 def test_predict_list_of_dicts(app_with_model: Flask):
     client = app_with_model.test_client()
-    payload = {"instances": [{"YearsExperience": 1.2}, {"YearsExperience": 10.6}]}
+    payload = {"instances": [
+        {"YearsExperience": 1.2}, {"YearsExperience": 10.6}]}
     resp = client.post("/predict", json=payload)
     assert resp.status_code == 200
     data = resp.get_json()

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any, List
 
 from flask import Blueprint, jsonify, request
 
@@ -59,7 +59,8 @@ def predict() -> Any:
         and len(instances_field) > 0
         and isinstance(instances_field[0], dict)
     ):
-        instances = [float(row.get("YearsExperience")) for row in instances_field]
+        instances = [float(row.get("YearsExperience"))
+                     for row in instances_field]
     elif (
         isinstance(instances_field, list)
         and len(instances_field) > 0
