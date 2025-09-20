@@ -13,37 +13,41 @@ pipeline {
 
   stages {
     stage('Checkout') {
-      steps { checkout scm }
+      steps {
+        checkout scm
+      }
     }
 
     stage('Set up Python') {
       steps {
-        bat '''
+        bat """
           python -m venv %PYENV%
           call %PYENV%\\Scripts\\activate
-          pip install --upgrade pip
+          python -m pip install --upgrade pip
           pip install -r requirements.txt
-        '''
+        """
       }
     }
 
     stage('Train Model') {
       steps {
-        bat '''
+        bat """
           call %PYENV%\\Scripts\\activate
-          python scripts\\train_model.py --data data\\Salary_dataset.csv --target Salary --model-out models\\model.pkl
-        '''
+          python scripts/train_model.py --data data/Salary_dataset.csv --target Salary --model-out models/model.pkl
+        """
       }
     }
 
     stage('Build & Push Docker Image') {
       steps {
-        script {
-          docker.withRegistry('https://registry-1.docker.io/', 'docker-hub-cred') {
-            def img = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
-            img.push()
-            img.push('latest')
-          }
+        withCredentials([usernamePassword(credentialsId: 'docker-hub-cred', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+          bat """
+            docker build -t %DOCKER_IMAGE%:%DOCKER_TAG% .
+            docker tag %DOCKER_IMAGE%:%DOCKER_TAG% %DOCKER_IMAGE%:latest
+            echo %DOCKER_PASS% | docker login -u %DOCKER_USER% --password-stdin
+            docker push %DOCKER_IMAGE%:%DOCKER_TAG%
+            docker push %DOCKER_IMAGE%:latest
+          """
         }
       }
     }
@@ -52,9 +56,11 @@ pipeline {
   post {
     success {
       emailext(
-        subject: "SUCCESS: Jenkins build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
+        subject: "✅ SUCCESS: Jenkins build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
         to: 'abdulhananch404@gmail.com',
         body: """\
+Good news! 🎉
+
 ✅ Build succeeded!
 
 Job: ${env.JOB_NAME}
@@ -63,14 +69,19 @@ Git Commit: ${env.GIT_COMMIT}
 
 Docker Image: ${DOCKER_IMAGE}:${DOCKER_TAG}
 Also tagged as: ${DOCKER_IMAGE}:latest
+
+Check console output: ${env.BUILD_URL}
 """
       )
     }
     failure {
       emailext(
-        subject: "FAILURE: Jenkins build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
+        subject: "❌ FAILURE: Jenkins build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
         to: 'abdulhananch404@gmail.com',
-        body: "❌ Build failed. See logs: ${env.BUILD_URL}"
+        body: """\
+Build failed. Please check logs here:
+${env.BUILD_URL}
+"""
       )
     }
   }
