@@ -3,12 +3,8 @@ pipeline {
 
   environment {
     PYENV = '.venv'
-    DOCKER_IMAGE = 'your-dockerhub-username/mlops_a1'
+    DOCKER_IMAGE = 'i221515/mlops_a1'
     DOCKER_TAG = "build-${env.BUILD_NUMBER}"
-  }
-
-  triggers {
-    // Configure GitHub Webhook to trigger this job on push to master
   }
 
   options {
@@ -44,7 +40,7 @@ pipeline {
     stage('Build & Push Docker Image') {
       steps {
         script {
-          docker.withRegistry('https://registry-1.docker.io/', 'dockerhub-credentials-id') {
+          docker.withRegistry('https://registry-1.docker.io/', 'docker-hub-cred') {
             def img = docker.build("${DOCKER_IMAGE}:${DOCKER_TAG}")
             img.push()
             img.push('latest')
@@ -58,9 +54,9 @@ pipeline {
     success {
       emailext(
         subject: "SUCCESS: Jenkins build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
-        to: 'admin@example.com',
+        to: 'abdulhananch404@gmail.com',
         body: """\
-Build succeeded.
+✅ Build succeeded!
 
 Job: ${env.JOB_NAME}
 Build: ${env.BUILD_NUMBER}
@@ -74,8 +70,8 @@ Also tagged as: ${DOCKER_IMAGE}:latest
     failure {
       emailext(
         subject: "FAILURE: Jenkins build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
-        to: 'admin@example.com',
-        body: "Build failed. See logs: ${env.BUILD_URL}"
+        to: 'abdulhananch404@gmail.com',
+        body: "❌ Build failed. See logs: ${env.BUILD_URL}"
       )
     }
   }

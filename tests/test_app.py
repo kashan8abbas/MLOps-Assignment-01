@@ -1,5 +1,4 @@
 import os
-from pathlib import Path
 
 import pytest
 from flask import Flask
@@ -15,16 +14,18 @@ def app_with_model(tmp_path_factory: pytest.TempPathFactory) -> Flask:
 
     import subprocess
 
-    subprocess.check_call([
-        "python",
-        "scripts/train_model.py",
-        "--data",
-        "data/Salary_dataset.csv",
-        "--target",
-        "Salary",
-        "--model-out",
-        str(model_path),
-    ])
+    subprocess.check_call(
+        [
+            "python",
+            "scripts/train_model.py",
+            "--data",
+            "data/Salary_dataset.csv",
+            "--target",
+            "Salary",
+            "--model-out",
+            str(model_path),
+        ]
+    )
 
     os.environ["MODEL_PATH"] = str(model_path)
     app = create_app()
@@ -41,9 +42,7 @@ def test_health(app_with_model: Flask):
 
 def test_predict_list_of_numbers(app_with_model: Flask):
     client = app_with_model.test_client()
-    payload = {
-        "instances": [1.2, 3.0, 10.6]
-    }
+    payload = {"instances": [1.2, 3.0, 10.6]}
     resp = client.post("/predict", json=payload)
     assert resp.status_code == 200
     data = resp.get_json()
@@ -53,12 +52,8 @@ def test_predict_list_of_numbers(app_with_model: Flask):
 
 def test_predict_list_of_dicts(app_with_model: Flask):
     client = app_with_model.test_client()
-    payload = {
-        "instances": [
-            {"YearsExperience": 1.2},
-            {"YearsExperience": 10.6}
-        ]
-    }
+    payload = {"instances": [
+        {"YearsExperience": 1.2}, {"YearsExperience": 10.6}]}
     resp = client.post("/predict", json=payload)
     assert resp.status_code == 200
     data = resp.get_json()
@@ -71,5 +66,3 @@ def test_predict_missing_instances(app_with_model: Flask):
     resp = client.post("/predict", json={})
     assert resp.status_code == 400
     assert "error" in resp.get_json()
-
-

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any, List
 
 from flask import Blueprint, jsonify, request
 
@@ -34,13 +34,18 @@ def health() -> Any:
 
 @bp.get("/")
 def index() -> Any:
-    return jsonify({
-        "message": "Flask ML service is running",
-        "endpoints": {
-            "GET /health": "health check",
-            "POST /predict": "send JSON with 'instances' to get predictions",
-        },
-    })
+    return jsonify(
+        {
+            "message": "Flask ML service is running",
+            "endpoints": {
+                "GET /health": "health check",
+                "POST /predict": (
+                    "send JSON with 'instances' "
+                    "to get predictions"
+                ),
+            },
+        }
+    )
 
 
 @bp.post("/predict")
@@ -48,16 +53,34 @@ def predict() -> Any:
     payload = request.get_json(silent=True) or {}
     instances_field = payload.get("instances")
     if instances_field is None:
-        return jsonify({"error": "Missing 'instances' in JSON body"}), 400
+        return (
+            jsonify({"error": "Missing 'instances' in JSON body"}), 400
+        )
 
-    # Accept: list of numbers (YearsExperience), or list of dicts with 'YearsExperience', or list of lists [[x], ...]
+    # Accept formats:
+    # - list of numbers (YearsExperience)
+    # - list of dicts with 'YearsExperience'
+    # - list of lists [[x], ...]
     instances: List[List[float]] | List[float]
-    if isinstance(instances_field, list) and len(instances_field) > 0 and isinstance(instances_field[0], dict):
-        instances = [float(row.get("YearsExperience")) for row in instances_field]
-    elif isinstance(instances_field, list) and len(instances_field) > 0 and not isinstance(instances_field[0], (list, tuple)):
+    if (
+        isinstance(instances_field, list)
+        and len(instances_field) > 0
+        and isinstance(instances_field[0], dict)
+    ):
+        instances = [
+            float(row.get("YearsExperience"))
+            for row in instances_field
+        ]
+    elif (
+        isinstance(instances_field, list)
+        and len(instances_field) > 0
+        and not isinstance(instances_field[0], (list, tuple))
+    ):
         instances = [float(x) for x in instances_field]
     else:
-        instances = [[float(x) for x in row] for row in instances_field]
+        instances = [
+            [float(x) for x in row] for row in instances_field
+        ]
 
     if STATE.model is None:
         model_path = os.environ.get("MODEL_PATH", "models/model.pkl")
@@ -67,5 +90,4 @@ def predict() -> Any:
     return jsonify({"predictions": preds})
 
 
-
-#hello this is the change in dev and going to merge it with master
+# hello this is the 2nd change in dev and going to merge it with master (2)
