@@ -52,15 +52,20 @@ def predict() -> Any:
     if instances_field is None:
         return jsonify({"error": "Missing 'instances' in JSON body"}), 400
 
-    # Accept: list of numbers (YearsExperience), or list of dicts with 'YearsExperience', or list of lists [[x], ...]
+    # Accept formats:
+    # - list of numbers (YearsExperience)
+    # - list of dicts with 'YearsExperience'
+    # - list of lists [[x], ...]
     instances: List[List[float]] | List[float]
     if (
         isinstance(instances_field, list)
         and len(instances_field) > 0
         and isinstance(instances_field[0], dict)
     ):
-        instances = [float(row.get("YearsExperience"))
-                     for row in instances_field]
+        instances = [
+            float(row.get("YearsExperience"))
+            for row in instances_field
+        ]
     elif (
         isinstance(instances_field, list)
         and len(instances_field) > 0
