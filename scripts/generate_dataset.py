@@ -18,7 +18,12 @@ def main() -> None:
         description="Generate a unique synthetic dataset per group."
     )
     parser.add_argument(
-        "--group-id", required=True, help="Unique group identifier (e.g., userA_userB)"
+        "--group-id",
+        required=True,
+        help=(
+            "Unique group identifier "
+            "(e.g., userA_userB)"
+        ),
     )
     parser.add_argument("--samples", type=int, default=500)
     parser.add_argument("--features", type=int, default=6)
