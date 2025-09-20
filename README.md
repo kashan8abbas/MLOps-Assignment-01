@@ -186,3 +186,4 @@ Configure later to integrate Docker Hub, environment secrets, etc.
 
 
 This  read me file was made by the master mind
+This file is already written
