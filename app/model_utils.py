@@ -29,9 +29,10 @@ def predict_with_model(
         X = np.asarray(instances, dtype=float)
 
     # If the model (or a step in a pipeline) was fitted with feature names
-    # (pandas DataFrame), trying to pass a DataFrame with the same column
-    # names avoids the sklearn warning:
-    # "X does not have valid feature names, but StandardScaler was fitted with feature names"
+    # (pandas DataFrame), passing a DataFrame with the same column names
+    # avoids the sklearn warning:
+    # "X does not have valid feature names, but StandardScaler was fitted
+    #  with feature names"
     feature_names = None
     # Top-level estimator with feature_names_in_
     if hasattr(model, "feature_names_in_"):
