@@ -18,9 +18,9 @@ pipeline {
 
     stage('Set up Python') {
       steps {
-        sh '''
-          python3 -m venv ${PYENV}
-          . ${PYENV}/bin/activate
+        bat '''
+          python -m venv %PYENV%
+          call %PYENV%\\Scripts\\activate
           pip install --upgrade pip
           pip install -r requirements.txt
         '''
@@ -29,9 +29,9 @@ pipeline {
 
     stage('Train Model') {
       steps {
-        sh '''
-          . ${PYENV}/bin/activate
-          python scripts/train_model.py --data data/Salary_dataset.csv --target Salary --model-out models/model.pkl
+        bat '''
+          call %PYENV%\\Scripts\\activate
+          python scripts\\train_model.py --data data\\Salary_dataset.csv --target Salary --model-out models\\model.pkl
         '''
       }
     }
