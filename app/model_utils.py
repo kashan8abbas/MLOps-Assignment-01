@@ -14,13 +14,17 @@ def load_model(model_path: str | None = None) -> Any:
     return model
 
 
-def predict_with_model(model: Any, instances: List[List[float]] | List[float] | np.ndarray) -> List[float]:
+def predict_with_model(
+    model: Any, instances: List[List[float]] | List[float] | np.ndarray
+) -> List[float]:
     # Support either list of single-feature values or list of lists
-    if isinstance(instances, list) and len(instances) > 0 and not isinstance(instances[0], (list, tuple, np.ndarray)):
+    if (
+        isinstance(instances, list)
+        and len(instances) > 0
+        and not isinstance(instances[0], (list, tuple, np.ndarray))
+    ):
         X = np.asarray([[float(v)] for v in instances], dtype=float)
     else:
         X = np.asarray(instances, dtype=float)
     predictions = model.predict(X)
     return np.asarray(predictions, dtype=float).ravel().tolist()
-
-

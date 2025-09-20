@@ -16,8 +16,12 @@ def group_seed(group_id: str) -> int:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Generate a unique synthetic dataset per group.")
-    parser.add_argument("--group-id", required=True, help="Unique group identifier (e.g., userA_userB)")
+    parser = argparse.ArgumentParser(
+        description="Generate a unique synthetic dataset per group."
+    )
+    parser.add_argument(
+        "--group-id", required=True, help="Unique group identifier (e.g., userA_userB)"
+    )
     parser.add_argument("--samples", type=int, default=500)
     parser.add_argument("--features", type=int, default=6)
     parser.add_argument("--classes", type=int, default=3)
@@ -46,5 +50,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-

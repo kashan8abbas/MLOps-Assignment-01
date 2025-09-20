@@ -13,8 +13,14 @@ from sklearn.preprocessing import StandardScaler
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Train regression model and save as model.pkl")
-    parser.add_argument("--data", required=True, help="Path to CSV dataset (expects YearsExperience, Salary)")
+    parser = argparse.ArgumentParser(
+        description="Train regression model and save as model.pkl"
+    )
+    parser.add_argument(
+        "--data",
+        required=True,
+        help="Path to CSV dataset (expects YearsExperience, Salary)",
+    )
     parser.add_argument("--target", default="Salary")
     parser.add_argument("--model-out", default="models/model.pkl")
     parser.add_argument("--metrics-out", default="models/metrics.json")
@@ -28,17 +34,18 @@ def main() -> None:
 
     feature_col = "YearsExperience"
     if feature_col not in df.columns or args.target not in df.columns:
-        raise ValueError("Dataset must contain 'YearsExperience' and target column (default 'Salary')")
+        raise ValueError(
+            "Dataset must contain 'YearsExperience' and target column (default 'Salary')"
+        )
 
     y = df[args.target]
     X = df[[feature_col]]
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.2, random_state=42
+    )
 
-    pipeline = Pipeline([
-        ("scaler", StandardScaler()),
-        ("reg", LinearRegression())
-    ])
+    pipeline = Pipeline([("scaler", StandardScaler()), ("reg", LinearRegression())])
 
     pipeline.fit(X_train, y_train)
 
@@ -60,5 +67,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-
