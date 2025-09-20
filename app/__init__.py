@@ -8,5 +8,3 @@ def create_app() -> Flask:
 
     app.register_blueprint(app_bp)
     return app
-
-
