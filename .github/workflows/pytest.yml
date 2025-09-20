@@ -1,0 +1,31 @@
+name: Pytest (PR to test)
+
+on:
+  pull_request:
+    branches: ["test"]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run tests
+        env:
+          MODEL_PATH: models/model.pkl
+        run: |
+          # Train a model quickly for the test run (Salary dataset)
+          python scripts/train_model.py --data data/Salary_dataset.csv --target Salary --model-out models/model.pkl
+          pytest -q
