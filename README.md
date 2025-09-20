@@ -185,6 +185,11 @@ docker run -p 5000:5000 -e MODEL_PATH=/app/models/model.pkl mlops_a1:dev
 Configure later to integrate Docker Hub, environment secrets, etc.
 
 
-
+<<<<<<<<< Temporary merge branch 1
 This  read me file was made by the master mind
+=========
+this is read me file
+this is the change in dev branch
 
+
+Now seeing if the code push
