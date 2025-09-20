@@ -11,38 +11,28 @@ pipeline {
     timestamps()
   }
 
-  triggers {
-    githubPush()   // Auto-trigger on GitHub push
-  }
-
   stages {
     stage('Checkout') {
-      steps {
-        checkout scm
-      }
+      steps { checkout scm }
     }
 
     stage('Set up Python') {
       steps {
-        ansiColor('xterm') {
-          sh '''
-            python3 -m venv ${PYENV}
-            . ${PYENV}/bin/activate
-            pip install --upgrade pip
-            pip install -r requirements.txt
-          '''
-        }
+        sh '''
+          python3 -m venv ${PYENV}
+          . ${PYENV}/bin/activate
+          pip install --upgrade pip
+          pip install -r requirements.txt
+        '''
       }
     }
 
     stage('Train Model') {
       steps {
-        ansiColor('xterm') {
-          sh '''
-            . ${PYENV}/bin/activate
-            python scripts/train_model.py --data data/Salary_dataset.csv --target Salary --model-out models/model.pkl
-          '''
-        }
+        sh '''
+          . ${PYENV}/bin/activate
+          python scripts/train_model.py --data data/Salary_dataset.csv --target Salary --model-out models/model.pkl
+        '''
       }
     }
 
@@ -62,7 +52,7 @@ pipeline {
   post {
     success {
       emailext(
-        subject: "✅ SUCCESS: Jenkins build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
+        subject: "SUCCESS: Jenkins build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
         to: 'abdulhananch404@gmail.com',
         body: """\
 ✅ Build succeeded!
@@ -78,7 +68,7 @@ Also tagged as: ${DOCKER_IMAGE}:latest
     }
     failure {
       emailext(
-        subject: "❌ FAILURE: Jenkins build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
+        subject: "FAILURE: Jenkins build #${env.BUILD_NUMBER} for ${env.JOB_NAME}",
         to: 'abdulhananch404@gmail.com',
         body: "❌ Build failed. See logs: ${env.BUILD_URL}"
       )
