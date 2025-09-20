@@ -39,7 +39,10 @@ def index() -> Any:
             "message": "Flask ML service is running",
             "endpoints": {
                 "GET /health": "health check",
-                "POST /predict": "send JSON with 'instances' to get predictions",
+                "POST /predict": (
+                    "send JSON with 'instances' "
+                    "to get predictions"
+                ),
             },
         }
     )
@@ -50,7 +53,9 @@ def predict() -> Any:
     payload = request.get_json(silent=True) or {}
     instances_field = payload.get("instances")
     if instances_field is None:
-        return jsonify({"error": "Missing 'instances' in JSON body"}), 400
+        return (
+            jsonify({"error": "Missing 'instances' in JSON body"}), 400
+        )
 
     # Accept formats:
     # - list of numbers (YearsExperience)
@@ -73,7 +78,9 @@ def predict() -> Any:
     ):
         instances = [float(x) for x in instances_field]
     else:
-        instances = [[float(x) for x in row] for row in instances_field]
+        instances = [
+            [float(x) for x in row] for row in instances_field
+        ]
 
     if STATE.model is None:
         model_path = os.environ.get("MODEL_PATH", "models/model.pkl")
